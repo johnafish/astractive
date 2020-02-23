@@ -1,13 +1,15 @@
 from PIL import Image, ImageDraw
 import math
 import random
+import time
 
-INK = (62, 146, 224)
-BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 
 def magnitude(x, y):
     return math.sqrt(x*x + y*y)
+
+def random_color():
+    return (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
 
 def cartesian(x, y, size):
     # take (x, y) points and turn them into cartesian points
@@ -48,19 +50,22 @@ def generate_spiral(image, A, B, color, width, spiral_type):
 
         # for rougher spiral, add random.randint(-3, 3) to width
         rectangle = quad(prev_position, position, width * scale, theta)
-        draw.polygon(rectangle, outline=BLACK)
+        draw.polygon(rectangle, outline=color)
         prev_position = position
         theta += step / r
 
 if __name__ == "__main__":
-    spiral = Image.new("RGB", (1000, 1000), INK) 
-    generate_spiral(
-            image = spiral,
-            A = 1,
-            B = 0.05,
-            color = BLACK,
-            width = 100, 
-            spiral_type = "log",
-    )
-    spiral.show()
-    spiral.save("images/cartesian.png")
+    for i in range(19000):
+        ink = random_color() 
+        spiral = Image.new("RGB", (128, 128), ink) 
+        generate_spiral(
+                image = spiral,
+                A = random.random() * 2,
+                B = random.random() * 0.5,
+                color = random_color(),
+                width = random.random() * 50 + 10, 
+                spiral_type = "log",
+        )
+        filename = "spirals/" + str(int(time.time()*1000)) + ".png"
+        spiral.save(filename)
+        print(filename)
